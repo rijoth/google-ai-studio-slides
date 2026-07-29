@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Apps with Google AI Studio &amp; Antigravity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Text:wght@400;500;700;900&family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070B1F;
+    --navy:#1B1464;
+    --indigo:#5D2EFF;
+    --violet:#8A2BE2;
+    --magenta:#C837AB;
+    --pink:#D946EF;
+    --white:#FFFFFF;
+    --g-blue:#4285F4;
+    --g-green:#34A853;
+    --g-yellow:#FBBC05;
+    --g-red:#EA4335;
+    --ant-blue:#3186FF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:'Google Sans Text','Google Sans','Inter',system-ui,-apple-system,sans-serif;
+    background:#05071a;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+
+  /* 16:9 stage that scales to viewport */
+  .stage{
+    position:relative;
+    width:1920px;height:1080px;
+    transform-origin:center center;
+    background:var(--bg);
+    color:var(--white);
+    overflow:hidden;
+  }
+  /* scaling handled by JS below to keep 16:9 */
+
+  /* ---------- Background layers ---------- */
+  .bg-base{position:absolute;inset:0;background:#070B1F}
+  .bg-radial{
+    position:absolute;inset:0;
+    background:
+      radial-gradient(120% 95% at 88% 8%, rgba(193,55,171,.55) 0%, rgba(138,43,226,.42) 22%, rgba(93,46,255,.30) 42%, rgba(27,20,100,.10) 62%, transparent 78%),
+      radial-gradient(90% 70% at 96% 2%, rgba(217,70,239,.30) 0%, transparent 55%);
+    mix-blend-mode:screen;
+  }
+  .bg-soft{
+    position:absolute;inset:0;
+    background:radial-gradient(60% 50% at 30% 90%, rgba(66,133,244,.18) 0%, transparent 70%);
+    mix-blend-mode:screen;
+  }
+  .bg-vignette{
+    position:absolute;inset:0;
+    background:radial-gradient(130% 110% at 50% 42%, transparent 55%, rgba(2,3,12,.55) 100%);
+    pointer-events:none;
+  }
+
+  /* dotted grid */
+  .dotted{
+    position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.9) 1px, transparent 1.6px);
+    background-size:42px 42px;
+    background-position:0 0;
+    opacity:.06;
+    -webkit-mask-image:radial-gradient(80% 70% at 70% 30%, #000 0%, transparent 75%);
+            mask-image:radial-gradient(80% 70% at 70% 30%, #000 0%, transparent 75%);
+  }
+  /* thin concentric circles, upper-right */
+  .rings{
+    position:absolute;top:-220px;right:-220px;width:780px;height:780px;
+    border-radius:50%;
+    border:1px solid rgba(199,127,255,.16);
+    box-shadow:
+      inset 0 0 0 1px rgba(199,127,255,0),
+      0 0 0 1px rgba(199,127,255,.08);
+    opacity:.5;
+  }
+  .rings::before,.rings::after{
+    content:"";position:absolute;border-radius:50%;
+    border:1px solid rgba(199,127,255,.12);
+  }
+  .rings::before{inset:90px}
+  .rings::after{inset:200px;border-color:rgba(199,127,255,.18)}
+
+  /* blurred light orbs */
+  .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.10;mix-blend-mode:screen}
+  .orb.a{width:520px;height:520px;top:120px;right:160px;background:#5D2EFF}
+  .orb.b{width:420px;height:420px;bottom:60px;right:420px;background:#D946EF;opacity:.09}
+  .orb.c{width:360px;height:360px;top:560px;left:-60px;background:#4285F4;opacity:.07}
+
+  /* ---------- Layout ---------- */
+  .grid{
+    position:absolute;inset:0;
+    padding:72px 96px;
+    display:grid;grid-template-columns:58fr 42fr;
+    gap:48px;align-items:center;
+  }
+  .left{position:relative;z-index:5;max-width:1040px}
+  /* dark scrim under text for contrast */
+  .left::before{
+    content:"";position:absolute;z-index:-1;
+    inset:-40px -120px -40px -120px;
+    background:linear-gradient(90deg, rgba(7,11,31,.42) 0%, rgba(7,11,31,.18) 70%, transparent 100%);
+    border-radius:32px;
+    -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  }
+
+  .right{position:relative;height:100%;display:flex;align-items:center;justify-content:center;z-index:4}
+
+  /* ---------- Badge ---------- */
+  .badge{
+    display:inline-flex;align-items:center;gap:12px;
+    padding:12px 24px;border-radius:999px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.22);
+    color:#E8EAF6;font-size:17px;font-weight:500;letter-spacing:.04em;
+    box-shadow:0 8px 30px rgba(0,0,0,.25);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  }
+  .badge .spark{display:inline-flex;align-items:center;justify-content:center;
+    width:18px;height:18px;color:#FFEE48;filter:drop-shadow(0 0 6px rgba(255,238,72,.5));animation:twinkle 2.4s ease-in-out infinite}
+  .badge .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.45)}
+  .badge .tag{color:#B9BCE0}
+
+  .sp-title{height:56px}
+
+  /* ---------- Headline ---------- */
+  .headline{
+    font-weight:900;letter-spacing:-.02em;line-height:.90;
+    font-size:90px;color:#FFFFFF;
+    text-shadow:0 6px 40px rgba(0,0,0,.28);
+    margin:0;
+  }
+  .headline .l1{display:block;color:#F5F6FF}
+  .headline .l2{display:block}
+  .headline .l3{display:block;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+
+  .g-word{display:inline-block}
+  .g-google{color:#4285F4}
+  .g-ai{color:#34A853}
+  .g-studio{color:#FBBC05}
+  /* span between google words space handled by inline gap */
+
+  .ag-lockup{
+    display:inline-flex;align-items:center;gap:18px;
+  }
+  .ag-mark{width:60px;height:60px;display:inline-block;flex:0 0 auto;
+    filter:drop-shadow(0 6px 18px rgba(49,134,255,.35)) drop-shadow(0 0 24px rgba(138,43,226,.30));
+    transform:translateY(-2px);
+  }
+  .ag-text{
+    font-weight:900;letter-spacing:-.02em;
+    background:linear-gradient(92deg,#FFFFFF 0%,#DCE0FF 45%,#AEBBFF 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 4px 30px rgba(120,140,255,.25);
+  }
+
+  /* ---------- Divider ---------- */
+  .divider{margin-top:36px;width:160px;height:8px;border-radius:999px;
+    background:linear-gradient(90deg,#D946EF 0%,#8A2BE2 50%,#4285F4 100%);
+    box-shadow:0 4px 22px rgba(138,43,226,.45)}
+
+  /* ---------- Subtitle ---------- */
+  .subtitle{margin-top:36px;max-width:700px;
+    font-weight:400;font-size:31px;line-height:1.5;color:#C9CDE8}
+  .subtitle b{color:#FFFFFF;font-weight:500}
+
+  /* ---------- Chips ---------- */
+  .chips{margin-top:48px;display:flex;flex-wrap:wrap;gap:20px}
+  .chip{
+    display:inline-flex;align-items:center;gap:11px;
+    padding:18px 28px;border-radius:999px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.18);
+    color:#EAECF7;font-size:22px;font-weight:500;letter-spacing:.01em;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  }
+  .chip .emo{font-size:24px;line-height:1;filter:drop-shadow(0 0 8px rgba(255,255,255,.25))}
+
+  /* ---------- Hero illustration ---------- */
+  .hero-wrap{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%}
+  .hero-glow{
+    position:absolute;width:760px;height:760px;border-radius:50%;
+    background:
+      radial-gradient(closest-side, rgba(66,133,244,.32), transparent 70%),
+      radial-gradient(closest-side at 60% 40%, rgba(138,43,226,.28), transparent 70%),
+      radial-gradient(closest-side at 50% 65%, rgba(217,70,239,.22), transparent 75%);
+    filter:blur(36px);mix-blend-mode:screen;
+    animation:breath 9s ease-in-out infinite;
+  }
+  .hero-mark{
+    position:relative;width:420px;height:420px;
+    filter:
+      drop-shadow(0 30px 60px rgba(49,134,255,.30))
+      drop-shadow(0 18px 40px rgba(138,43,226,.28))
+      drop-shadow(0 0 60px rgba(217,70,239,.22));
+    animation:float 6s ease-in-out infinite;
+  }
+  .hero-mark img,.hero-mark svg{width:100%;height:100%;display:block}
+  /* floor reflection */
+  .hero-ref{
+    margin-top:-12px;width:300px;height:120px;
+    background:radial-gradient(closest-side, rgba(120,140,255,.30), transparent 75%);
+    filter:blur(22px);opacity:.5;transform:scaleY(-1);
+    animation:float 6s ease-in-out infinite;
+  }
+  .hero-floor{position:absolute;bottom:170px;width:460px;height:60px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(138,43,226,.35), transparent 80%);
+    filter:blur(30px);opacity:.6}
+
+  /* ---------- Animations ---------- */
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+  @keyframes breath{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.06);opacity:1}}
+  @keyframes twinkle{0%,100%{opacity:.9;transform:scale(1) rotate(0)}50%{opacity:1;transform:scale(1.25) rotate(8deg)}}
+
+  .fade-up{opacity:0;transform:translateY(26px);animation:fu .6s cubic-bezier(.2,.7,.2,1) forwards}
+  .fade-in{opacity:0;animation:fi .6s ease forwards}
+  @keyframes fu{to{opacity:1;transform:translateY(0)}}
+  @keyframes fi{to{opacity:1}}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;opacity:1 !important;transform:none !important}
+  }
+
+  ::selection{background:rgba(138,43,226,.4)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <!-- background -->
+  <div class="bg-base"></div>
+  <div class="bg-radial"></div>
+  <div class="bg-soft"></div>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+  <div class="orb c"></div>
+  <div class="dotted"></div>
+  <div class="rings"></div>
+  <div class="bg-vignette"></div>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <div class="left">
+      <div class="badge fade-in" style="animation-delay:.05s">
+        <span class="spark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.5l1.9 6.2 6.2 1.9-6.2 1.9-1.9 6.2-1.9-6.2L3.9 10.6 10.1 8.7z"/></svg>
+        </span>
+        <span>A 50-MINUTE HANDS-ON WORKSHOP</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="tag">BEGINNER FRIENDLY</span>
+      </div>
+
+      <div class="sp-title"></div>
+
+      <h1 class="headline fade-up" style="animation-delay:.15s">
+        <span class="l1">Building Apps with</span>
+        <span class="l2">
+          <span class="g-word g-google">Google</span>
+          <span class="g-word g-ai">AI</span>
+          <span class="g-word g-studio">Studio</span>
+        </span>
+        <span class="l3">
+          <span class="ag-lockup">
+            <img class="ag-mark" src="antigravity-mark.svg" alt="Antigravity logo">
+            <span class="ag-text">&amp; Antigravity</span>
+          </span>
+        </span>
+      </h1>
+
+      <div class="divider fade-in" style="animation-delay:.45s"></div>
+
+      <p class="subtitle fade-in" style="animation-delay:.55s">
+        From idea to deployed app &mdash; by <b>talking to AI</b>.<br>
+        Learn how Google AI Studio and Antigravity<br>
+        turn plain English into running software.
+      </p>
+
+      <div class="chips">
+        <span class="chip fade-up" style="animation-delay:.7s"><span class="emo">🚀</span>Vibe Coding</span>
+        <span class="chip fade-up" style="animation-delay:.8s"><span class="emo">🧠</span>Prompt Engineering</span>
+        <span class="chip fade-up" style="animation-delay:.9s"><span class="emo">☁️</span>Firebase + Cloud Run</span>
+        <span class="chip fade-up" style="animation-delay:1s"><span class="emo">🤖</span>Agentic Development</span>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <div class="hero-wrap fade-in" style="animation-delay:.25s">
+        <div class="hero-glow"></div>
+        <div class="hero-floor"></div>
+        <div class="hero-mark" id="heroMark">
+          <img src="antigravity-mark.svg" alt="Antigravity">
+        </div>
+        <div class="hero-ref"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // scale stage to fit viewport while keeping 1920x1080 design
+  (function(){
+    function fit(){
+      var s=document.getElementById('stage');
+      var sx=window.innerWidth/1920, sy=window.innerHeight/1080;
+      var k=Math.min(sx,sy);
+      s.style.transform='scale('+k+')';
+    }
+    fit();window.addEventListener('resize',fit);
+  })();
+</script>
+</body>
+</html>

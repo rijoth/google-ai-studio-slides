@@ -386,7 +386,7 @@
             "icon": "🐍",
             "iconClass": "i-purple",
             "title": "Code Execution",
-            "body": "Runs Python in a sandbox - math, sorting, charts.",
+            "body": "Runs in a sandbox.",
             "borderColor": "#A142F4"
           },
           {

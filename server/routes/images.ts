@@ -20,7 +20,7 @@ imagesRouter.get('/', async (_req: Request, res: Response) => {
 
 imagesRouter.delete('/:filename', async (req: Request, res: Response) => {
   try {
-    const filename = req.params.filename;
+    const filename = req.params.filename as string;
     const presentation = await getPresentation();
 
     // Remove from all slides

@@ -519,47 +519,6 @@
       "sub": "Default stack: <strong>React/Next.js</strong> frontend + <strong>Node.js</strong> backend. Annotation Mode lets you highlight UI and say \"make this blue.\""
     },
     {
-      "id": "compare-stream",
-      "part": 2,
-      "slideType": "content",
-      "imageSlots": [
-        {
-          "name": "compare-mode",
-          "label": "Compare Mode screenshot",
-          "description": "Compare Mode showing two model responses side-by-side with token counts."
-        }
-      ],
-      "images": {},
-      "eyebrow": "Three more modes",
-      "title": "Compare · Stream · <span class=\"mark blue\">Annotate</span>",
-      "featureGrid": {
-        "cols": 3,
-        "items": [
-          {
-            "icon": "⚖️",
-            "iconClass": "i-blue",
-            "title": "Compare Mode",
-            "body": "Send one prompt to several models or settings - A/B test cost & quality. Track token usage side-by-side.",
-            "borderColor": "#4285F4"
-          },
-          {
-            "icon": "📡",
-            "iconClass": "i-green",
-            "title": "Stream Mode",
-            "body": "Realtime voice + vision + screen sharing. Show your screen; Gemini watches you code and points out errors.",
-            "borderColor": "#34A853"
-          },
-          {
-            "icon": "🖌",
-            "iconClass": "i-yellow",
-            "title": "Annotation Mode",
-            "body": "Highlight any UI part and describe changes instead of hunting through files.",
-            "borderColor": "#FBBC04"
-          }
-        ]
-      }
-    },
-    {
       "id": "export-deploy",
       "part": 2,
       "slideType": "content",
@@ -578,7 +537,7 @@
           "cards": [
             {
               "title": "🧾 Get Code",
-              "body": "Turns your prompt + response + settings into a code snippet. Languages: <strong>Python, Java, REST, TypeScript, .NET, Go</strong>.",
+              "body": "Turns your prompt + response + settings into a code snippet.",
               "titleColor": "#4285F4"
             },
             {
@@ -603,63 +562,6 @@
           ]
         }
       }
-    },
-    {
-      "id": "workload-presets",
-      "part": 2,
-      "slideType": "content",
-      "imageSlots": [],
-      "images": {},
-      "eyebrow": "Workload presets",
-      "title": "Combos beat <span class=\"mark warm\">single tweaks</span>",
-      "comparisonTable": {
-        "headers": [
-          "Workload",
-          "Temp",
-          "Top-P",
-          "Thinking",
-          "Best tool"
-        ],
-        "rows": [
-          {
-            "label": "Factchecking",
-            "values": [
-              "0.1–0.3",
-              "0.4",
-              "Medium",
-              "Search Grounding"
-            ]
-          },
-          {
-            "label": "Creative writing",
-            "values": [
-              "0.8–1.0",
-              "0.9",
-              "Low",
-              "None (freedom)"
-            ]
-          },
-          {
-            "label": "System debugging",
-            "values": [
-              "0.0",
-              "0.1",
-              "High",
-              "Code Execution"
-            ]
-          },
-          {
-            "label": "Data extraction",
-            "values": [
-              "0.0",
-              "0.1",
-              "Low",
-              "Structured parsing"
-            ]
-          }
-        ]
-      },
-      "sub": "⚠ Common error: <strong>fact-checking at high temperature</strong> - model prioritizes \"sounding good\" over being right."
     },
     {
       "id": "divider-p3",

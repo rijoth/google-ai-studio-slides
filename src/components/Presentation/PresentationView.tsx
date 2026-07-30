@@ -38,7 +38,7 @@ const styles = `
 `;
 
 export default function PresentationView() {
-  const { presentation } = usePresentationStore();
+  const { presentation, loading, error, loadPresentation } = usePresentationStore();
   const { settings } = useSettingsStore();
   const [current, setCurrent] = useState(0);
   const [showNotes, setShowNotes] = useState(false);
@@ -68,7 +68,42 @@ export default function PresentationView() {
     return () => window.removeEventListener('keydown', handler);
   }, [next, prev, goTo, slides.length]);
 
-  if (!presentation) return <div style={{ padding: 40, fontFamily: 'sans-serif' }}>Loading presentation...</div>;
+  if (!presentation) {
+    if (error) {
+      const isNetwork = error.includes('Failed to fetch') || error.includes('NetworkError');
+      const isHtmlJson = error.includes('Unexpected token') && error.includes('<');
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'sans-serif', gap: 16, padding: 40 }}>
+          <div style={{ fontSize: '1.2rem', color: '#EA4335', fontWeight: 600 }}>Failed to load presentation</div>
+          <div style={{ color: '#475569', fontSize: '0.9rem', maxWidth: 500, textAlign: 'center', lineHeight: 1.5 }}>{error}</div>
+          {isNetwork && (
+            <div style={{ background: '#FEF3C7', border: '1px solid #F59E0B', borderRadius: 12, padding: '14px 20px', maxWidth: 500, fontSize: '0.88rem', color: '#92400E', lineHeight: 1.5 }}>
+              <strong>Server not reachable.</strong> Make sure the backend is running:<br />
+              <code style={{ background: '#FDE68A', padding: '2px 6px', borderRadius: 4 }}>npm start</code> — then visit <code style={{ background: '#FDE68A', padding: '2px 6px', borderRadius: 4 }}>http://localhost:3001</code>
+            </div>
+          )}
+          {isHtmlJson && (
+            <div style={{ background: '#FEF3C7', border: '1px solid #F59E0B', borderRadius: 12, padding: '14px 20px', maxWidth: 500, fontSize: '0.88rem', color: '#92400E', lineHeight: 1.5 }}>
+              <strong>Wrong server.</strong> The API is returning HTML instead of JSON.<br />
+              Run <code style={{ background: '#FDE68A', padding: '2px 6px', borderRadius: 4 }}>npm start</code> (not a plain static server) and visit <code style={{ background: '#FDE68A', padding: '2px 6px', borderRadius: 4 }}>http://localhost:3001</code>
+            </div>
+          )}
+          <button
+            onClick={() => loadPresentation()}
+            style={{
+              padding: '10px 24px', borderRadius: 12, border: 'none',
+              background: '#4285F4', color: '#fff', fontWeight: 700,
+              fontSize: '0.95rem', cursor: 'pointer',
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+    if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'sans-serif', color: '#475569', fontSize: '1.1rem' }}>Loading presentation…</div>;
+    return <div style={{ padding: 40, fontFamily: 'sans-serif' }}>Loading presentation...</div>;
+  }
 
   const slide = slides[current];
   const transition = settings?.transition || 'fade';

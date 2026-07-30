@@ -7,6 +7,7 @@
 import { create } from 'zustand';
 import type { Presentation, Slide } from '../types';
 import { fetchPresentation, updateSlide as apiUpdateSlide } from '../api/client';
+import embeddedPresentation from '../data/presentation.json';
 
 interface PresentationState {
   presentation: Presentation | null;
@@ -18,7 +19,7 @@ interface PresentationState {
 }
 
 export const usePresentationStore = create<PresentationState>((set, get) => ({
-  presentation: null,
+  presentation: embeddedPresentation as Presentation,
   loading: false,
   error: null,
 

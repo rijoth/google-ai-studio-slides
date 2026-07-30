@@ -1,0 +1,21 @@
+{
+  "presentationTitle": "Building Apps with Google AI Studio & Antigravity",
+  "instructorName": "",
+  "courseName": "College Workshop",
+  "date": "2026",
+  "theme": "material3",
+  "primaryColor": "#4285F4",
+  "secondaryColor": "#A142F4",
+  "fontFamily": "\"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+  "cornerRadius": 22,
+  "shadowLevel": 2,
+  "spacing": 20,
+  "transition": "fade",
+  "showSpeakerNotes": false,
+  "fullscreenOnStart": true,
+  "autoSave": true,
+  "speakerTimer": false,
+  "enableKeyboardShortcuts": true,
+  "enableAnimations": true,
+  "imageCompressionLevel": 80
+}

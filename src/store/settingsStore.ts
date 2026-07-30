@@ -7,6 +7,7 @@
 import { create } from 'zustand';
 import type { Settings } from '../types';
 import { fetchSettings, saveSettings as apiSaveSettings } from '../api/client';
+import embeddedSettings from '../data/settings.json';
 
 interface SettingsState {
   settings: Settings | null;
@@ -18,7 +19,7 @@ interface SettingsState {
 }
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
-  settings: null,
+  settings: embeddedSettings as Settings,
   loading: false,
   error: null,
 

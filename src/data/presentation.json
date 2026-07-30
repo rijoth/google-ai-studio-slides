@@ -302,57 +302,6 @@
       }
     },
     {
-      "id": "models",
-      "part": 2,
-      "slideType": "content",
-      "imageSlots": [
-        {
-          "name": "model-selector",
-          "label": "Model Selector screenshot",
-          "description": "Model Selector dropdown listing Gemini 3, Gemini 2.5 Pro, Veo, Imagen, Live models."
-        }
-      ],
-      "images": {
-        "model-selector": "/images/2026-07-29_23-11-1785347103037.png"
-      },
-      "eyebrow": "Model selector",
-      "title": "Choose the right <span class=\"mark blue\">brain</span>",
-      "featureGrid": {
-        "cols": 4,
-        "items": [
-          {
-            "icon": "✦",
-            "iconClass": "i-blue",
-            "title": "Gemini",
-            "body": "Text, image, reasoning - default for most tasks.",
-            "borderColor": "#4285F4"
-          },
-          {
-            "icon": "🖼",
-            "iconClass": "i-yellow",
-            "title": "Imagen",
-            "body": "Generate & edit images from prompts.",
-            "borderColor": "#FBBC04"
-          },
-          {
-            "icon": "🎬",
-            "iconClass": "i-green",
-            "title": "Veo",
-            "body": "Text-to-video - cinematic clips.",
-            "borderColor": "#34A853"
-          },
-          {
-            "icon": "🗣",
-            "iconClass": "i-purple",
-            "title": "Live / Lyria",
-            "body": "Speech, audio, music; realtime voice+vision.",
-            "borderColor": "#A142F4"
-          }
-        ]
-      },
-      "sub": "Older variants (Gemini 2.5, Gemini 2…) are also available. Paid models show a \"Paid\" tag."
-    },
-    {
       "id": "tune-model",
       "part": 2,
       "slideType": "content",
